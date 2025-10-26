@@ -1,4 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
+import { Product, AIOutfit } from "../types";
 
 // Lazily initialize the GoogleGenAI client to prevent app crashes on load
 // if the API key is missing or invalid.
@@ -37,5 +38,51 @@ Do not mention prices or specific stores. The goal is to inspire, not to sell.`;
   } catch (error) {
     console.error("Error generating vibe description from Gemini:", error);
     throw new Error("Failed to communicate with the AI stylist.");
+  }
+};
+
+
+export const generateAIOutfit = async (vibe: string, products: Product[]): Promise<AIOutfit> => {
+  try {
+    const aiClient = getAiClient();
+    
+    const simplifiedProducts = products.map(({ id, name, brand }) => ({ id, name, brand })).join(', ');
+    const systemInstruction = `You are an AI fashion stylist for Arkaenia. Your task is to create a complete outfit based on a user's requested vibe.
+From the provided list of products, select between 2 and 4 items that create a cohesive look.
+Provide a short, friendly paragraph of styling advice explaining your choices.
+You must return the response in a JSON format that matches the provided schema.`;
+
+    const contents = `User's Vibe: "${vibe}".\nAvailable Products: [${simplifiedProducts}]`;
+
+    const response = await aiClient.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents,
+        config: {
+            systemInstruction,
+            responseMimeType: 'application/json',
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    productIds: {
+                        type: Type.ARRAY,
+                        items: { type: Type.STRING },
+                        description: 'An array of product IDs for the outfit.'
+                    },
+                    advice: {
+                        type: Type.STRING,
+                        description: 'Styling advice for the outfit.'
+                    }
+                },
+                required: ['productIds', 'advice']
+            }
+        }
+    });
+
+    // The response.text is a JSON string, so we parse it.
+    return JSON.parse(response.text) as AIOutfit;
+
+  } catch (error) {
+    console.error("Error generating AI outfit from Gemini:", error);
+    throw new Error("Failed to generate an outfit. The AI stylist might be busy.");
   }
 };

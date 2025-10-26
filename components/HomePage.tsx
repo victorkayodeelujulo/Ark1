@@ -1,12 +1,13 @@
 import React from 'react';
 import { Playlist, Product, QuickLink, Reel } from '../types';
-import { PLAYLISTS, QUICK_LINKS, STORIES, PRODUCTS } from '../constants';
+import { PLAYLISTS, QUICK_LINKS, PRODUCTS } from '../constants';
 import PlaylistCard from './PlaylistCard';
 import ProductCard from './ProductCard';
 import QuickLinkCard from './QuickLinkCard';
 import * as Icons from './IconComponents';
 
 interface HomePageProps {
+  stories: Reel[];
   wishlist: string[];
   onProductSelect: (product: Product) => void;
   onAddToCart: (product: Product) => void;
@@ -15,13 +16,14 @@ interface HomePageProps {
   onAddToWishlist: (productId: string) => void;
   onRemoveFromWishlist: (productId: string) => void;
   onSelectStory: (story: Reel) => void;
+  onOpenUploadModal: () => void;
 }
 
 const PlaylistSection: React.FC<{ title: string; playlists: Playlist[]; onNavigateToPlaylist: (playlist: Playlist) => void; }> = ({ title, playlists, onNavigateToPlaylist }) => (
   <section className="mb-12">
     <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-arkaenia-accent">{title}</h2>
-        <a href="#" className="text-sm font-bold text-arkaenia-subtext hover:underline">See all</a>
+        <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark">{title}</h2>
+        <a href="#" className="text-sm font-bold text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:underline">See all</a>
     </div>
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       {playlists.map(playlist => (
@@ -37,30 +39,30 @@ const StoryItem: React.FC<{ story: Reel; onSelectStory: (story: Reel) => void; }
         <img 
           src={story.thumbnailUrl} 
           alt={story.userName} 
-          className="w-20 h-20 rounded-full object-cover border-2 border-arkaenia-bg"
+          className="w-20 h-20 rounded-full object-cover border-2 border-arkaenia-bg dark:border-arkaenia-bg-dark"
         />
     </div>
-    <p className="text-sm text-arkaenia-subtext truncate w-full text-center">{story.userName}</p>
+    <p className="text-sm text-arkaenia-subtext dark:text-arkaenia-subtext-dark truncate w-full text-center">{story.userName}</p>
   </div>
 );
 
 
-const YourStoryItem: React.FC = () => (
-    <div className="flex-shrink-0 flex flex-col items-center space-y-2 w-24 cursor-pointer group">
-        <div className="w-[82px] h-[82px] flex items-center justify-center rounded-full bg-arkaenia-card group-hover:scale-105 transition-transform">
-             <div className="w-20 h-20 flex items-center justify-center rounded-full bg-arkaenia-card/50 border-2 border-dashed border-arkaenia-subtext">
-                <Icons.PlusIcon className="w-8 h-8 text-arkaenia-subtext"/>
+const YourStoryItem: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+    <div onClick={onClick} className="flex-shrink-0 flex flex-col items-center space-y-2 w-24 cursor-pointer group">
+        <div className="w-[82px] h-[82px] flex items-center justify-center rounded-full bg-arkaenia-card dark:bg-arkaenia-card-dark group-hover:scale-105 transition-transform">
+             <div className="w-20 h-20 flex items-center justify-center rounded-full bg-arkaenia-card/50 dark:bg-arkaenia-card-dark/50 border-2 border-dashed border-arkaenia-subtext dark:border-arkaenia-subtext-dark">
+                <Icons.PlusIcon className="w-8 h-8 text-arkaenia-subtext dark:text-arkaenia-subtext-dark"/>
              </div>
         </div>
-        <p className="text-sm text-arkaenia-subtext truncate w-full text-center">Your Story</p>
+        <p className="text-sm text-arkaenia-subtext dark:text-arkaenia-subtext-dark truncate w-full text-center">Your Story</p>
   </div>
 );
 
-const StoriesSection: React.FC<{ onSelectStory: (story: Reel) => void }> = ({ onSelectStory }) => (
+const StoriesSection: React.FC<{ stories: Reel[]; onSelectStory: (story: Reel) => void; onOpenUploadModal: () => void; }> = ({ stories, onSelectStory, onOpenUploadModal }) => (
   <section className="mb-8 -mx-6 px-6">
     <div className="flex space-x-4 overflow-x-auto pb-4">
-        <YourStoryItem />
-      {STORIES.map(story => (
+        <YourStoryItem onClick={onOpenUploadModal} />
+      {stories.map(story => (
         <StoryItem key={story.id} story={story} onSelectStory={onSelectStory} />
       ))}
     </div>
@@ -70,7 +72,7 @@ const StoriesSection: React.FC<{ onSelectStory: (story: Reel) => void }> = ({ on
 
 const GoodAfternoonSection: React.FC<{ onNavigateToCategory: (link: QuickLink) => void; }> = ({ onNavigateToCategory }) => (
     <section className="mb-8">
-        <h2 className="text-3xl font-bold text-arkaenia-accent mb-4">Amazing outfits, from ₦3,000</h2>
+        <h2 className="text-3xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-4">Amazing outfits, from ₦3,000</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {QUICK_LINKS.map(link => (
                 <QuickLinkCard key={link.id} link={link} onClick={() => onNavigateToCategory(link)} />
@@ -88,8 +90,8 @@ const DiscoverSection: React.FC<{
 }> = ({ wishlist, onProductSelect, onAddToCart, onAddToWishlist, onRemoveFromWishlist }) => (
   <section>
     <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold text-arkaenia-accent">Discover!</h2>
-      <a href="#" className="text-sm font-bold text-arkaenia-subtext hover:underline">See all</a>
+      <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark">Discover!</h2>
+      <a href="#" className="text-sm font-bold text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:underline">See all</a>
     </div>
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       {PRODUCTS.map(product => (
@@ -109,6 +111,7 @@ const DiscoverSection: React.FC<{
 
 
 const HomePage: React.FC<HomePageProps> = ({ 
+    stories,
     wishlist,
     onProductSelect, 
     onAddToCart, 
@@ -117,12 +120,13 @@ const HomePage: React.FC<HomePageProps> = ({
     onAddToWishlist,
     onRemoveFromWishlist,
     onSelectStory,
+    onOpenUploadModal,
 }) => {
   const madeForYou = PLAYLISTS.slice(0, 5);
   
   return (
     <div className="space-y-16 animate-fadeIn">
-        <StoriesSection onSelectStory={onSelectStory} />
+        <StoriesSection stories={stories} onSelectStory={onSelectStory} onOpenUploadModal={onOpenUploadModal} />
         <GoodAfternoonSection onNavigateToCategory={onNavigateToCategory} />
         <PlaylistSection title="Styles That Match Your Taste!" playlists={madeForYou} onNavigateToPlaylist={onNavigateToPlaylist} />
         <DiscoverSection 

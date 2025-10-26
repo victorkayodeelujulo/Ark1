@@ -8,14 +8,14 @@ const QuickLinkCard: React.FC<{ link: QuickLink; onClick: () => void; }> = ({ li
         if (link.imageUrls.length > 1) {
             const timer = setInterval(() => {
                 setCurrentIndex((prevIndex) => (prevIndex + 1) % link.imageUrls.length);
-            }, 2000);
+            }, 3000);
             return () => clearInterval(timer);
         }
     }, [link.imageUrls.length]);
 
     return (
         <button onClick={onClick} className="flex flex-col items-center gap-3 group text-left">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
+            <div className="relative w-36 h-36 rounded-full overflow-hidden shadow-lg transform group-hover:scale-105 transition-transform duration-300">
                 {link.imageUrls.map((url, index) => (
                     <img
                         key={index}

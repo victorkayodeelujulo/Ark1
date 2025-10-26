@@ -18,12 +18,12 @@ const PlaylistPage: React.FC<PlaylistPageProps> = ({ playlist, products, wishlis
   return (
     <div className="animate-fadeIn">
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={onBack} className="p-2 text-arkaenia-subtext hover:text-arkaenia-accent transition-colors">
+        <button onClick={onBack} className="p-2 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors">
           <ChevronLeftIcon className="w-8 h-8" />
         </button>
         <div>
-            <h1 className="text-4xl font-bold text-arkaenia-accent capitalize">{playlist.title}</h1>
-            <p className="text-arkaenia-subtext mt-1">{playlist.description}</p>
+            <h1 className="text-4xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark capitalize">{playlist.title}</h1>
+            <p className="text-arkaenia-subtext dark:text-arkaenia-subtext-dark mt-1">{playlist.description}</p>
         </div>
       </div>
 

@@ -11,7 +11,7 @@ interface PaymentModalProps {
 const Tab: React.FC<{ id: string; label: string; icon: React.ReactNode; activeTab: string; setActiveTab: (id: string) => void; }> = ({ id, label, icon, activeTab, setActiveTab }) => (
     <button 
       onClick={() => setActiveTab(id)} 
-      className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-t-lg transition-colors focus:outline-none ${activeTab === id ? 'bg-arkaenia-surface text-arkaenia-accent font-bold' : 'bg-arkaenia-bg/50 text-arkaenia-subtext hover:bg-arkaenia-surface'}`}
+      className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-t-lg transition-colors focus:outline-none ${activeTab === id ? 'bg-arkaenia-surface dark:bg-arkaenia-surface-dark text-arkaenia-accent dark:text-arkaenia-accent-dark font-bold' : 'bg-arkaenia-bg/50 dark:bg-arkaenia-bg-dark/50 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:bg-arkaenia-surface dark:hover:bg-arkaenia-surface-dark'}`}
     >
       {icon}
       <span>{label}</span>
@@ -20,12 +20,12 @@ const Tab: React.FC<{ id: string; label: string; icon: React.ReactNode; activeTa
 
 const InputField: React.FC<{ label: string; placeholder: string }> = ({ label, placeholder }) => (
     <div>
-        <label className="block text-sm font-bold text-arkaenia-subtext mb-1">{label}</label>
+        <label className="block text-sm font-bold text-arkaenia-subtext dark:text-arkaenia-subtext-dark mb-1">{label}</label>
         <input 
             type="text" 
             placeholder={placeholder}
             disabled 
-            className="w-full p-2 bg-arkaenia-card/50 border border-arkaenia-card rounded-md placeholder-arkaenia-subtext/50 cursor-not-allowed"
+            className="w-full p-2 bg-arkaenia-card/50 dark:bg-arkaenia-card-dark/50 border border-arkaenia-card dark:border-arkaenia-card-dark rounded-md placeholder-arkaenia-subtext/50 dark:placeholder-arkaenia-subtext-dark/50 cursor-not-allowed"
         />
     </div>
 );
@@ -50,15 +50,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
       onClick={onClose}
     >
       <div 
-        className="bg-arkaenia-bg rounded-lg shadow-2xl max-w-md w-full mx-4 animate-scaleIn relative" 
+        className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg shadow-2xl max-w-md w-full mx-4 animate-scaleIn relative" 
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 text-arkaenia-subtext hover:text-arkaenia-accent transition-colors z-10">
+        <button onClick={onClose} className="absolute top-4 right-4 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors z-10">
             <CloseIcon className="w-6 h-6"/>
         </button>
 
-        <div className="text-center p-6 border-b border-arkaenia-card">
-            <h2 className="text-2xl font-bold text-arkaenia-accent">Complete Your Order</h2>
+        <div className="text-center p-6 border-b border-arkaenia-card dark:border-arkaenia-card-dark">
+            <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark">Complete Your Order</h2>
         </div>
         
         <div className="p-1">
@@ -66,7 +66,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
               <Tab id="card" label="Card" icon={<CreditCardIcon className="w-5 h-5" />} activeTab={activeTab} setActiveTab={setActiveTab} />
               <Tab id="paypal" label="PayPal" icon={<PaypalIcon className="w-5 h-5" />} activeTab={activeTab} setActiveTab={setActiveTab} />
           </div>
-          <div className="p-6 bg-arkaenia-surface rounded-b-lg">
+          <div className="p-6 bg-arkaenia-surface dark:bg-arkaenia-surface-dark rounded-b-lg">
             {activeTab === 'card' && (
               <div className="space-y-4 animate-fadeIn">
                 <InputField label="Card Number" placeholder="**** **** **** 1234" />
@@ -79,7 +79,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
             )}
             {activeTab === 'paypal' && (
               <div className="text-center p-8 animate-fadeIn">
-                  <p className="text-arkaenia-subtext">You will be redirected to PayPal to complete your payment securely.</p>
+                  <p className="text-arkaenia-subtext dark:text-arkaenia-subtext-dark">You will be redirected to PayPal to complete your payment securely.</p>
                   <button className="mt-4 w-full bg-[#0070BA] text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity">
                       Log in to PayPal
                   </button>
@@ -88,11 +88,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, onPaymentS
           </div>
         </div>
         
-        <div className="p-6 border-t border-arkaenia-card">
+        <div className="p-6 border-t border-arkaenia-card dark:border-arkaenia-card-dark">
             <button 
                 onClick={handlePayment}
                 disabled={isProcessing}
-                className="w-full py-3 font-bold bg-arkaenia-primary text-white rounded-full hover:scale-105 transition-transform duration-200 disabled:bg-arkaenia-subtext disabled:scale-100 disabled:cursor-wait"
+                className="w-full py-3 font-bold bg-arkaenia-primary dark:bg-arkaenia-primary-dark text-white dark:text-arkaenia-bg-dark rounded-full hover:scale-105 transition-transform duration-200 disabled:bg-arkaenia-subtext dark:disabled:bg-arkaenia-subtext-dark disabled:scale-100 disabled:cursor-wait"
             >
                 {isProcessing ? 'Processing...' : `Pay ₦${totalAmount.toFixed(2)}`}
             </button>

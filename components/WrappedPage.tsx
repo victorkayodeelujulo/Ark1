@@ -1,23 +1,18 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Product } from '../types';
-import { PRODUCTS, PURCHASE_HISTORY, GENRES, AFROBEATS_MUSIC_URL } from '../constants';
+import { PRODUCTS, PURCHASE_HISTORY, GENRES, BACKGROUND_MUSIC_URL } from '../constants';
 import { TwitterIcon, InstagramIcon, ShareIcon, CloseIcon } from './IconComponents';
 
 // --- Data Analysis Logic ---
-// This function processes the mock purchase history to find trends.
 const analyzeHistory = () => {
-    // Get full product details from IDs
     const purchasedProducts = PURCHASE_HISTORY.map(id => PRODUCTS.find(p => p.id === id)).filter((p): p is Product => Boolean(p));
 
-    // Count occurrences of each brand
     const brandCounts = purchasedProducts.reduce((acc, product) => {
         acc[product.brand] = (acc[product.brand] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
-    // Find the top brand
     const topBrandEntry = Object.entries(brandCounts).sort((a, b) => b[1] - a[1])[0];
 
-    // Count occurrences of each genre/style
     const genreCounts = purchasedProducts.reduce((acc, product) => {
         GENRES.forEach(genre => {
             if (genre.productIds.includes(product.id)) {
@@ -26,11 +21,10 @@ const analyzeHistory = () => {
         });
         return acc;
     }, {} as Record<string, number>);
-    // Find the top genre
     const topGenreEntry = Object.entries(genreCounts).sort((a, b) => b[1] - a[1])[0];
 
     return {
-        purchasedProducts: [...new Map(purchasedProducts.map(item => [item.id, item])).values()], // Unique products
+        purchasedProducts: [...new Map(purchasedProducts.map(item => [item.id, item])).values()],
         totalItems: PURCHASE_HISTORY.length,
         topBrand: topBrandEntry ? { name: topBrandEntry[0], count: topBrandEntry[1] } : null,
         topGenre: topGenreEntry ? { name: topGenreEntry[0] } : null,
@@ -38,20 +32,36 @@ const analyzeHistory = () => {
 };
 
 // --- Main Component ---
-const WrappedPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+interface WrappedPageProps {
+    onBack: () => void;
+    onOpenUploadModal: () => void;
+}
+
+const WrappedPage: React.FC<WrappedPageProps> = ({ onBack, onOpenUploadModal }) => {
     const [slide, setSlide] = useState(0);
     const audioRef = useRef<HTMLAudioElement>(null);
     const analysis = useMemo(() => analyzeHistory(), []);
 
-    // Effect to control audio playback
     useEffect(() => {
-        audioRef.current?.play().catch(e => console.error("Audio playback failed:", e));
+        // The play() method returns a promise. We need to handle potential
+        // rejections, such as when the component unmounts before playback starts.
+        const playPromise = audioRef.current?.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                // Ignore the AbortError, which is expected when the user navigates
+                // away before the media starts playing.
+                if (error.name !== 'AbortError') {
+                    console.error("Audio playback failed:", error);
+                }
+            });
+        }
+
         return () => {
+            // Ensure audio is paused when the component unmounts.
             audioRef.current?.pause();
         };
     }, []);
 
-    // Define the slides for the presentation
     const slides = [
         <div className="text-center">
             <h1 className="text-6xl font-extrabold mb-4">Your 2024</h1>
@@ -95,7 +105,7 @@ const WrappedPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                  <button className="flex items-center w-full sm:w-auto justify-center gap-2 bg-white text-arkaenia-accent font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform"><TwitterIcon className="w-6 h-6"/> <span>Share on Twitter</span></button>
                  <button className="flex items-center w-full sm:w-auto justify-center gap-2 bg-white text-arkaenia-accent font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform"><InstagramIcon className="w-6 h-6"/> <span>Share on Instagram</span></button>
-                 <button className="flex items-center w-full sm:w-auto justify-center gap-2 bg-white text-arkaenia-accent font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform"><ShareIcon className="w-6 h-6"/> <span>Post to Reels</span></button>
+                 <button onClick={onOpenUploadModal} className="flex items-center w-full sm:w-auto justify-center gap-2 bg-white text-arkaenia-accent font-bold px-6 py-3 rounded-full hover:scale-105 transition-transform"><ShareIcon className="w-6 h-6"/> <span>Post to Reels</span></button>
             </div>
         </div>
     ].filter(Boolean);
@@ -105,7 +115,7 @@ const WrappedPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
     return (
         <div className="fixed inset-0 bg-arkaenia-primary text-white z-50 flex flex-col items-center justify-center p-4 sm:p-8 animate-fadeIn">
-             <audio ref={audioRef} src={AFROBEATS_MUSIC_URL} loop />
+             <audio ref={audioRef} src={BACKGROUND_MUSIC_URL} loop />
              <button onClick={onBack} className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/20 transition-colors z-20">
                 <CloseIcon className="w-8 h-8"/>
              </button>

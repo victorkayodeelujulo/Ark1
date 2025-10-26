@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -19,6 +20,15 @@
             'arkaenia-accent': '#5C2D91',
             'arkaenia-primary': '#5C2D91',
             'arkaenia-teal': '#5C2D91',
+
+            // Dark Theme Colors
+            'arkaenia-bg-dark': '#120E17',
+            'arkaenia-surface-dark': '#1A1620',
+            'arkaenia-card-dark': '#2C2635',
+            'arkaenia-text-dark': '#E8E2EE',
+            'arkaenia-subtext-dark': '#A297B1',
+            'arkaenia-accent-dark': '#BEA4E2',
+            'arkaenia-primary-dark': '#BEA4E2',
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -27,6 +37,8 @@
             fadeIn: 'fadeIn 0.5s ease-in-out',
             slideInUp: 'slideInUp 0.5s ease-in-out',
             scaleIn: 'scaleIn 0.3s ease-in-out',
+            flyIn: 'flyIn 0.6s ease-out forwards',
+            pulseSlow: 'pulseSlow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           },
           keyframes: {
             fadeIn: {
@@ -41,13 +53,21 @@
                 '0%': { opacity: '0', transform: 'scale(0.95)' },
                 '100%': { opacity: '1', transform: 'scale(1)' },
             },
+            flyIn: {
+              '0%': { transform: 'translateY(50px) scale(0.9)', opacity: '0' },
+              '100%': { transform: 'translateY(0) scale(1)', opacity: '1' },
+            },
+            pulseSlow: {
+                '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+                '50%': { transform: 'scale(1.05)', opacity: '0.8' },
+            }
           }
         },
       },
     }
     </script>
     <style>
-        /* Custom scrollbar for webkit browsers */
+        /* Light mode scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -61,6 +81,17 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #5C2D91; /* arkaenia-accent */
         }
+        
+        /* Dark mode scrollbar */
+        html.dark ::-webkit-scrollbar-track {
+            background: #1A1620; /* arkaenia-surface-dark */
+        }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #2C2635; /* arkaenia-card-dark */
+        }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #BEA4E2; /* arkaenia-accent-dark */
+        }
     </style>
     <script type="importmap">
     {
@@ -73,7 +104,7 @@
     }
     </script>
 </head>
-<body>
+<body class="bg-arkaenia-bg dark:bg-arkaenia-bg-dark">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

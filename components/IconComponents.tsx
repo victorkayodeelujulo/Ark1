@@ -1,3 +1,4 @@
+// FIX: Restored the file to its original content, removing extraneous code that caused compilation errors.
 import React from 'react';
 
 interface IconProps {
@@ -28,6 +29,20 @@ export const WrappedIcon: React.FC<IconProps> = ({ className }) => (
         <path d="M12 2.69l.94 2.06.94 2.06L16 6.87l2.12.31-1.53 1.49-1.53 1.49.36 2.11.36 2.11-1.9-.99-1.9-.99-1.9.99-1.9.99.36-2.11.36-2.11-1.53-1.49-1.53-1.49L8 6.87l2.06-.94L11.06 4.75 12 2.69m0-2.69L10.5 4.5 6 6l3.5 3.5L8.5 15l3.5-2 3.5 2-1-5.5L18 6l-4.5-1.5L12 0z"/>
     </svg>
 );
+
+export const AIStudioIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M15.5,13.5L11,22.5L12,17L7,17L11.5,8L11,13L15.5,13.5M19.33,12.67L18.67,15.33L16,16L18.67,16.67L19.33,19.33L20,16.67L22.67,16L20,15.33L19.33,12.67M19.33,4L18.67,6.67L16,7.33L18.67,8L19.33,10.67L20,8L22.67,7.33L20,6.67L19.33,4Z" />
+  </svg>
+);
+
+export const ClosetIcon: React.FC<IconProps> = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.6 9.8 12 13.6l4.4-3.8c.7-.6 1.6-1 2.6-1 .8 0 1.6.2 2.3.6s1.2 1 1.5 1.8c.3.8.4 1.7.2 2.5l-2 8.2H3.4l-2-8.2c-.2-.8-.1-1.7.2-2.5s.8-1.4 1.5-1.8c.7-.4 1.5-.6 2.3-.6 1 0 1.9.4 2.6 1Z"/>
+      <path d="M8 9.2V8a4 4 0 0 1 4-4 4 4 0 0 1 4 4v1.2"/>
+  </svg>
+);
+
 
 export const BookmarkIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -120,6 +135,14 @@ export const DiscoverWeeklyIcon: React.FC<IconProps> = ({ className }) => (
     </svg>
 );
 
+export const DownloadIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+);
+
 export const GoogleIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
         <path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.19,4.73C14.03,4.73 15.6,5.33 16.85,6.45L19.04,4.23C17.2,2.4 14.83,1 12.19,1C6.42,1 2.03,5.57 2.03,12C2.03,18.43 6.42,23 12.19,23C17.96,23 21.54,18.61 21.54,12.29C21.54,11.75 21.45,11.4 21.35,11.1Z"/>
@@ -172,5 +195,25 @@ export const InstagramIcon: React.FC<IconProps> = ({ className }) => (
 export const CheckCircleIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+);
+
+export const MoonIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+);
+
+export const SunIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
     </svg>
 );

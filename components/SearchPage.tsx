@@ -43,17 +43,17 @@ const SearchPage: React.FC<SearchPageProps> = ({ products, wishlist, onProductSe
     <div className="animate-fadeIn">
       {/* Search Bar Header */}
       <div className="flex items-center gap-4 mb-8">
-         <button onClick={onBack} className="p-2 -ml-2 text-arkaenia-subtext hover:text-arkaenia-accent transition-colors">
+         <button onClick={onBack} className="p-2 -ml-2 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors">
           <ChevronLeftIcon className="w-8 h-8" />
         </button>
         <div className="relative flex-1">
-          <SearchIcon className="absolute w-5 h-5 text-arkaenia-subtext top-1/2 left-4 -translate-y-1/2" />
+          <SearchIcon className="absolute w-5 h-5 text-arkaenia-subtext dark:text-arkaenia-subtext-dark top-1/2 left-4 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search for clothes, brands, and more"
-            className="w-full text-lg py-3 pl-12 pr-4 text-arkaenia-text rounded-lg bg-arkaenia-surface border-2 border-transparent focus:bg-arkaenia-bg focus:border-arkaenia-accent outline-none transition-colors"
+            className="w-full text-lg py-3 pl-12 pr-4 text-arkaenia-text dark:text-arkaenia-text-dark rounded-lg bg-arkaenia-surface dark:bg-arkaenia-surface-dark border-2 border-transparent focus:bg-arkaenia-bg dark:focus:bg-arkaenia-bg-dark focus:border-arkaenia-accent dark:focus:border-arkaenia-accent-dark outline-none transition-colors"
             autoFocus
           />
         </div>
@@ -62,7 +62,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ products, wishlist, onProductSe
       {/* Initial State: Browse Genres */}
       {!searchTerm.trim() && (
         <div>
-          <h2 className="text-2xl font-bold text-arkaenia-accent mb-4">Browse all</h2>
+          <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-4">Browse all</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {GENRES.map(genre => <GenreCard key={genre.id} genre={genre} onClick={() => onNavigateToGenre(genre)} />)}
           </div>
@@ -72,7 +72,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ products, wishlist, onProductSe
       {/* Search Results */}
       {hasResults && (
         <div>
-          <h2 className="text-2xl font-bold text-arkaenia-accent mb-4">Results for "{searchTerm}"</h2>
+          <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-4">Results for "{searchTerm}"</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {filteredProducts.map(product => (
               <ProductCard
@@ -92,9 +92,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ products, wishlist, onProductSe
       {/* No Results */}
       {noResults && (
         <div className="text-center py-20">
-          <SearchIcon className="w-24 h-24 mx-auto text-arkaenia-subtext mb-4" />
-          <h2 className="text-2xl font-bold text-arkaenia-accent">No results found for "{searchTerm}"</h2>
-          <p className="text-arkaenia-subtext mt-2">Please try a different search term.</p>
+          <SearchIcon className="w-24 h-24 mx-auto text-arkaenia-subtext dark:text-arkaenia-subtext-dark mb-4" />
+          <h2 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark">No results found for "{searchTerm}"</h2>
+          <p className="text-arkaenia-subtext dark:text-arkaenia-subtext-dark mt-2">Please try a different search term.</p>
         </div>
       )}
 

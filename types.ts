@@ -68,3 +68,8 @@ export interface Genre {
     imageUrl: string;
     productIds: string[];
 }
+
+export interface AIOutfit {
+    productIds: string[];
+    advice: string;
+}

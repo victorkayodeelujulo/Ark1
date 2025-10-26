@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import HomePage from './components/HomePage';
@@ -14,23 +14,27 @@ import PaymentSuccessModal from './components/PaymentSuccessModal';
 import StoryModal from './components/StoryModal';
 import GenrePage from './components/GenrePage';
 import WrappedPage from './components/WrappedPage';
-// FIX: The errors regarding missing type members were caused by an incorrect `types.ts` file.
-// With `types.ts` now correctly exporting the interfaces, these named imports work as intended.
+import UploadReelModal from './components/UploadReelModal';
+import ClosetPage from './components/ClosetPage';
+import AIStudioPage from './components/AIStudioPage'; // Import new component
 import { Product, QuickLink, Playlist, User, Reel, Genre } from './types';
-import { PRODUCTS } from './constants';
+import { PRODUCTS, INITIAL_STORIES, PURCHASE_HISTORY } from './constants';
 
 const App: React.FC = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]); // Product IDs
-  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped' | 'closet' | 'ai-studio'>('home');
   const [selectedCategory, setSelectedCategory] = useState<QuickLink | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [selectedStory, setSelectedStory] = useState<Reel | null>(null);
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [stories, setStories] = useState<Reel[]>(INITIAL_STORIES);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [userProfile, setUserProfile] = useState<User>({
     name: 'Alex Doe',
     email: 'alex.doe@example.com',
@@ -42,6 +46,16 @@ const App: React.FC = () => {
         dresses: 'US 8',
     }
   });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove(theme === 'light' ? 'dark' : 'light');
+    root.classList.add(theme);
+  }, [theme]);
+  
+  const handleThemeToggle = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
 
   const handleToggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed);
@@ -110,6 +124,14 @@ const App: React.FC = () => {
     setCurrentView('wrapped');
   };
 
+  const handleNavigateToCloset = () => {
+    setCurrentView('closet');
+  };
+
+  const handleNavigateToAIStudio = () => {
+    setCurrentView('ai-studio');
+  };
+
   const handleUpdateProfile = (updatedProfile: User) => {
     setUserProfile(updatedProfile);
   };
@@ -135,7 +157,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       setIsPaymentSuccess(false);
       handleNavigateHome();
-    }, 3000); // Show success message for 3 seconds then navigate home
+    }, 3000);
   };
 
   const handleSelectStory = (story: Reel) => {
@@ -145,10 +167,61 @@ const App: React.FC = () => {
   const handleCloseStory = () => {
     setSelectedStory(null);
   };
+  
+  const handleOpenUploadModal = () => setIsUploadModalOpen(true);
+  const handleCloseUploadModal = () => setIsUploadModalOpen(false);
+  
+  const handleAddReel = (fileUrl: string, caption: string) => {
+    const newReel: Reel = {
+      id: `reel-${Date.now()}`,
+      userName: userProfile.name,
+      thumbnailUrl: fileUrl,
+      fullImageUrl: fileUrl,
+    };
+    setStories(prevStories => [newReel, ...prevStories]);
+    handleCloseUploadModal();
+  };
 
   const renderContent = () => {
+    if (currentView === 'ai-studio') {
+        const closetProducts = PURCHASE_HISTORY
+            .map(id => PRODUCTS.find(p => p.id === id))
+            .filter((p): p is Product => Boolean(p));
+        const wishlistProducts = PRODUCTS.filter(p => wishlist.includes(p.id));
+
+        return (
+            <AIStudioPage
+                closetProducts={closetProducts}
+                wishlistProducts={wishlistProducts}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+    
+    if (currentView === 'closet') {
+        const closetProducts = PURCHASE_HISTORY
+            .map(id => PRODUCTS.find(p => p.id === id))
+            .filter((p): p is Product => Boolean(p));
+        return (
+            <ClosetPage
+                products={closetProducts}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+
     if (currentView === 'wrapped') {
-        return <WrappedPage onBack={handleNavigateHome} />;
+        return <WrappedPage onBack={handleNavigateHome} onOpenUploadModal={handleOpenUploadModal} />;
     }
     
     if (currentView === 'genre' && selectedGenre) {
@@ -207,6 +280,8 @@ const App: React.FC = () => {
           user={userProfile}
           onUpdateProfile={handleUpdateProfile}
           onBack={handleNavigateHome}
+          theme={theme}
+          onThemeToggle={handleThemeToggle}
         />
       );
     }
@@ -258,6 +333,7 @@ const App: React.FC = () => {
     
     return (
       <HomePage
+        stories={stories}
         wishlist={wishlist}
         onProductSelect={handleProductSelect}
         onAddToCart={handleAddToCart}
@@ -266,12 +342,13 @@ const App: React.FC = () => {
         onAddToWishlist={handleAddToWishlist}
         onRemoveFromWishlist={handleRemoveFromWishlist}
         onSelectStory={handleSelectStory}
+        onOpenUploadModal={handleOpenUploadModal}
       />
     );
   };
 
   return (
-    <div className="h-screen bg-arkaenia-bg text-arkaenia-text font-sans flex flex-col">
+    <div className="h-screen bg-arkaenia-bg dark:bg-arkaenia-bg-dark text-arkaenia-text dark:text-arkaenia-text-dark font-sans flex flex-col">
       <div className="flex flex-1 overflow-hidden">
         <Sidebar 
             isCollapsed={isSidebarCollapsed} 
@@ -282,6 +359,8 @@ const App: React.FC = () => {
             onNavigateToChat={handleNavigateToChat}
             onNavigateToSearch={handleNavigateToSearch}
             onNavigateToWrapped={handleNavigateToWrapped}
+            onNavigateToCloset={handleNavigateToCloset}
+            onNavigateToAIStudio={handleNavigateToAIStudio}
         />
         <main className="flex-1 flex flex-col overflow-y-auto">
           <Header 
@@ -302,6 +381,7 @@ const App: React.FC = () => {
       {currentView !== 'wrapped' && <NowPlayingBar product={selectedProduct} onAddToCart={handleAddToCart} />}
       {isPaymentSuccess && <PaymentSuccessModal />}
       {selectedStory && <StoryModal story={selectedStory} onClose={handleCloseStory} />}
+      {isUploadModalOpen && <UploadReelModal onClose={handleCloseUploadModal} onPost={handleAddReel} />}
     </div>
   );
 };

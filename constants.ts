@@ -1,7 +1,7 @@
 import { Product, Playlist, Reel, QuickLink, ChatUser, ChatMessage, Genre } from './types';
 
 export const ARKAENIA_LOGO = 'https://lh3.googleusercontent.com/d/1YPRBBmTxLrjYLTBFRYKKrFRMTHH6hLC8'
-export const AFROBEATS_MUSIC_URL = 'https://cdn.pixabay.com/download/audio/2022/01/24/audio_510a041a98.mp3';
+export const BACKGROUND_MUSIC_URL = 'https://storage.googleapis.com/pedagogico/plataforma/recursos/lofi-loop.mp3';
 
 export const PRODUCTS: Product[] = [
   {
@@ -152,7 +152,7 @@ export const PLAYLISTS: Playlist[] = [
   },
 ];
 
-export const STORIES: Reel[] = [
+export const INITIAL_STORIES: Reel[] = [
   { id: 'reel-001', userName: 'StyleByMaria', thumbnailUrl: 'https://images.pexels.com/photos/974911/pexels-photo-974911.jpeg?auto=compress&cs=tinysrgb&w=300', fullImageUrl: 'https://images.pexels.com/photos/3757743/pexels-photo-3757743.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { id: 'reel-002', userName: 'UrbanExplorer', thumbnailUrl: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=300', fullImageUrl: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=800' },
   { id: 'reel-003', userName: 'JennaLovesChic', thumbnailUrl: 'https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=300', fullImageUrl: 'https://images.pexels.com/photos/1839904/pexels-photo-1839904.jpeg?auto=compress&cs=tinysrgb&w=800' },
@@ -199,7 +199,7 @@ export const QUICK_LINKS: QuickLink[] = [
         title: 'trending now',
         imageUrls: [
             'https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg?auto=compress&cs=tinysrgb&w=300',
-            'https://images.pexels.com/photos/2034346/pexels-photo-2034346.jpeg?auto=compress&cs=tinysrgb&w=300',
+            'https://images.pexels.com/photos/1124465/pexels-photo-1124465.jpeg?auto=compress&cs=tinysrgb&w=300',
             'https://images.pexels.com/photos/267320/pexels-photo-267320.jpeg?auto=compress&cs=tinysrgb&w=300',
         ],
         productIds: ['prod-002', 'prod-010', 'prod-007', 'prod-009'],

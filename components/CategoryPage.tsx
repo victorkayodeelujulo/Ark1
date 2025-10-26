@@ -18,10 +18,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({ category, products, wishlis
   return (
     <div className="animate-fadeIn">
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={onBack} className="p-2 text-arkaenia-subtext hover:text-arkaenia-accent transition-colors">
+        <button onClick={onBack} className="p-2 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors">
           <ChevronLeftIcon className="w-8 h-8" />
         </button>
-        <h1 className="text-4xl font-bold text-arkaenia-accent capitalize">{category.title}</h1>
+        <h1 className="text-4xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark capitalize">{category.title}</h1>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

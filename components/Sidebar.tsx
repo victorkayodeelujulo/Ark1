@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, HeartIcon, ChatIcon, WrappedIcon } from './IconComponents';
+import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, ChatIcon, WrappedIcon, DownloadIcon, ClosetIcon, AIStudioIcon } from './IconComponents';
 import { ARKAENIA_LOGO } from '../constants';
 
 interface NavItemProps {
@@ -12,7 +12,7 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ icon, label, isCollapsed, active, onClick }) => {
   const commonProps = {
-    className: `flex items-center gap-4 py-2 rounded-md transition-colors ${isCollapsed ? 'px-3' : 'px-4'} ${active ? 'text-arkaenia-accent bg-arkaenia-card' : 'text-arkaenia-subtext hover:text-arkaenia-accent'}`,
+    className: `flex items-center gap-4 py-2 rounded-md transition-colors w-full ${isCollapsed ? 'px-3 justify-center' : 'px-4'} ${active ? 'text-arkaenia-accent dark:text-arkaenia-accent-dark bg-arkaenia-card dark:bg-arkaenia-card-dark' : 'text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark'}`,
   };
   
   if (onClick) {
@@ -34,8 +34,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isCollapsed, active, onC
 
 
 const SectionTitle: React.FC<{ isCollapsed: boolean; children: React.ReactNode }> = ({ isCollapsed, children }) => {
-    if (isCollapsed) return <div className="p-4"><div className="w-full h-px bg-arkaenia-card" /></div>;
-    return <h2 className="px-4 pt-4 pb-2 text-sm font-bold text-arkaenia-subtext uppercase tracking-wider">{children}</h2>;
+    if (isCollapsed) return <div className="p-4"><div className="w-full h-px bg-arkaenia-card dark:bg-arkaenia-card-dark" /></div>;
+    return <h2 className="px-4 pt-4 pb-2 text-sm font-bold text-arkaenia-subtext dark:text-arkaenia-subtext-dark uppercase tracking-wider">{children}</h2>;
 }
 
 interface SidebarProps {
@@ -47,19 +47,21 @@ interface SidebarProps {
     onNavigateToChat: () => void;
     onNavigateToSearch: () => void;
     onNavigateToWrapped: () => void;
+    onNavigateToCloset: () => void;
+    onNavigateToAIStudio: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, onNavigateHome, onNavigateToWishlist, onNavigateToChat, onNavigateToSearch, onNavigateToWrapped }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, onNavigateHome, onNavigateToWishlist, onNavigateToChat, onNavigateToSearch, onNavigateToWrapped, onNavigateToCloset, onNavigateToAIStudio }) => {
   return (
-    <nav className={`bg-arkaenia-surface flex-shrink-0 flex flex-col p-2 space-y-2 transition-all duration-300 ${isCollapsed ? 'w-[88px]' : 'w-64'}`}>
-      <div className={`bg-arkaenia-bg rounded-lg p-2 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+    <nav className={`bg-arkaenia-surface dark:bg-arkaenia-surface-dark flex-shrink-0 flex flex-col p-2 space-y-2 transition-all duration-300 ${isCollapsed ? 'w-[88px]' : 'w-64'}`}>
+      <div className={`bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg p-2 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
         {!isCollapsed && (
              <div className="flex items-center gap-2">
                 <img src={ARKAENIA_LOGO} alt="Arkaenia Logo" className="w-6 h-6"/>
-                <span className="font-bold text-lg">ARKAENIA</span>
+                <span className="font-bold text-lg text-arkaenia-text dark:text-arkaenia-text-dark">ARKAENIA</span>
             </div>
         )}
-        <button onClick={onToggle} className="p-2 text-arkaenia-subtext hover:text-arkaenia-accent transition-colors">
+        <button onClick={onToggle} className="p-2 text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors">
           {isCollapsed ? (
             <img src={ARKAENIA_LOGO} alt="Arkaenia Logo" className="w-6 h-6"/>
           ) : (
@@ -68,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, o
         </button>
       </div>
 
-      <div className="bg-arkaenia-bg rounded-lg p-2 space-y-1">
+      <div className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg p-2 space-y-1">
         <NavItem icon={<HomeIcon className="w-6 h-6" />} label="Home" isCollapsed={isCollapsed} active={currentView === 'home'} onClick={onNavigateHome} />
         <NavItem icon={<SearchIcon className="w-6 h-6" />} label="Search" isCollapsed={isCollapsed} active={currentView === 'search'} onClick={onNavigateToSearch} />
         <NavItem 
@@ -86,25 +88,46 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, o
             active={currentView === 'wrapped'} 
             onClick={onNavigateToWrapped} 
         />
+        <NavItem 
+            icon={<AIStudioIcon className="w-6 h-6" />} 
+            label="AI Dress Up Studio" 
+            isCollapsed={isCollapsed} 
+            active={currentView === 'ai-studio'} 
+            onClick={onNavigateToAIStudio} 
+        />
       </div>
 
-      <div className="bg-arkaenia-bg rounded-lg flex-1 flex flex-col overflow-y-auto">
-        <SectionTitle isCollapsed={isCollapsed}>Made For You</SectionTitle>
-        <div className="p-2 space-y-1">
-            <NavItem icon={<GridIcon className="w-6 h-6" />} label="What's new?" isCollapsed={isCollapsed} />
-            <NavItem icon={<ReleaseRadarIcon className="w-6 h-6" />} label="New arrivals" isCollapsed={isCollapsed} />
-            <NavItem icon={<DiscoverWeeklyIcon className="w-6 h-6" />} label="Weekly gems" isCollapsed={isCollapsed} />
+      <div className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg flex-1 flex flex-col overflow-hidden">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+            <SectionTitle isCollapsed={isCollapsed}>Made For You</SectionTitle>
+            <div className="p-2 space-y-1">
+                <NavItem icon={<ClosetIcon className="w-6 h-6" />} label="My Closet" isCollapsed={isCollapsed} active={currentView === 'closet'} onClick={onNavigateToCloset} />
+                <NavItem icon={<GridIcon className="w-6 h-6" />} label="What's new?" isCollapsed={isCollapsed} />
+                <NavItem icon={<ReleaseRadarIcon className="w-6 h-6" />} label="New arrivals" isCollapsed={isCollapsed} />
+                <NavItem icon={<DiscoverWeeklyIcon className="w-6 h-6" />} label="Weekly gems" isCollapsed={isCollapsed} />
+            </div>
+            
+            {!isCollapsed && (
+                <div className="px-4 py-2 mt-4 overflow-y-auto space-y-2 border-t border-arkaenia-card dark:border-arkaenia-card-dark">
+                  {['Beach Vacation', 'Harmattan airy', 'Wedding Guest', 'Bougee Lagos Vibes'].map(playlist => (
+                    <div key={playlist} className="text-arkaenia-subtext dark:text-arkaenia-subtext-dark hover:text-arkaenia-accent dark:hover:text-arkaenia-accent-dark transition-colors cursor-pointer">
+                      <p className="font-semibold text-sm whitespace-nowrap">{playlist}</p>
+                    </div>
+                  ))}
+                </div>
+            )}
         </div>
         
-        {!isCollapsed && (
-            <div className="flex-1 px-4 py-2 mt-4 overflow-y-auto space-y-2 border-t border-arkaenia-card">
-              {['Beach Vacation', 'Harmattan airy', 'Wedding Guest', 'Bougee Lagos Vibes'].map(playlist => (
-                <div key={playlist} className="text-arkaenia-subtext hover:text-arkaenia-accent transition-colors cursor-pointer">
-                  <p className="font-semibold text-sm whitespace-nowrap">{playlist}</p>
-                </div>
-              ))}
-            </div>
-        )}
+        {/* Bottom, non-scrolling button */}
+        <div className="flex-shrink-0 p-2 border-t border-arkaenia-card dark:border-arkaenia-card-dark">
+             <NavItem 
+                icon={<DownloadIcon className="w-6 h-6" />} 
+                label="Download App" 
+                isCollapsed={isCollapsed} 
+                onClick={() => alert('App download would start here!')} 
+            />
+        </div>
       </div>
     </nav>
   );
