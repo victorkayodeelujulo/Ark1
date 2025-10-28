@@ -13,6 +13,17 @@ const getAiClient = (): GoogleGenAI => {
     return ai;
 };
 
+// Helper function to convert a File to a GoogleGenerativeAI.Part
+async function fileToGenerativePart(file: File) {
+    const base64EncodedDataPromise = new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+        reader.readAsDataURL(file);
+    });
+    return {
+        inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
+    };
+}
 
 export const generateVibeDescription = async (vibe: string): Promise<string> => {
   try {
@@ -85,4 +96,54 @@ You must return the response in a JSON format that matches the provided schema.`
     console.error("Error generating AI outfit from Gemini:", error);
     throw new Error("Failed to generate an outfit. The AI stylist might be busy.");
   }
+};
+
+export const searchWithAttachments = async (prompt: string, attachments: File[], allProducts: Product[]): Promise<string[]> => {
+    try {
+        const aiClient = getAiClient();
+
+        const simplifiedProducts = allProducts.map(({ id, name, brand, color }) => ({ id, name, brand, color: color || 'N/A' }));
+
+        const systemInstruction = `You are a visual search expert for the Arkaenia fashion e-commerce store. Your task is to analyze the user-provided image(s) and optional text prompt. 
+        Based on this visual and textual information, identify the products from the provided JSON list of available products that are the most visually similar or relevant.
+        Focus on style, color, pattern, and garment type. If the user specifies a color or modification in the prompt, prioritize that.
+        You must return the response as a JSON object that strictly matches the provided schema, containing an array of the corresponding product IDs. If no items match, return an empty array.`;
+
+        const imageParts = await Promise.all(attachments.map(fileToGenerativePart));
+
+        const contents = {
+            parts: [
+                ...imageParts,
+                { text: `User prompt: "${prompt}"` },
+                { text: `Available products JSON: ${JSON.stringify(simplifiedProducts)}` }
+            ]
+        };
+
+        const response = await aiClient.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: contents,
+            config: {
+                systemInstruction,
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        productIds: {
+                            type: Type.ARRAY,
+                            items: { type: Type.STRING },
+                            description: 'An array of product IDs that are visually similar to the input.'
+                        }
+                    },
+                    required: ['productIds']
+                }
+            }
+        });
+
+        const result = JSON.parse(response.text);
+        return result.productIds || [];
+
+    } catch (error) {
+        console.error("Error performing visual search with Gemini:", error);
+        throw new Error("Failed to communicate with the visual search AI.");
+    }
 };

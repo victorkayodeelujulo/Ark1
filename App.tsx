@@ -10,13 +10,17 @@ import ProfilePage from './components/ProfilePage';
 import WishlistPage from './components/WishlistPage';
 import ChatPage from './components/ChatPage';
 import SearchPage from './components/SearchPage';
+import SearchWithAttachmentsPage from './components/SearchWithAttachmentsPage';
 import PaymentSuccessModal from './components/PaymentSuccessModal';
 import StoryModal from './components/StoryModal';
 import GenrePage from './components/GenrePage';
 import WrappedPage from './components/WrappedPage';
 import UploadReelModal from './components/UploadReelModal';
 import ClosetPage from './components/ClosetPage';
-import AIStudioPage from './components/AIStudioPage'; // Import new component
+import AIStudioPage from './components/AIStudioPage';
+import WhatsNewPage from './components/WhatsNewPage';
+import NewArrivalsPage from './components/NewArrivalsPage';
+import WeeklyGemsPage from './components/WeeklyGemsPage';
 import { Product, QuickLink, Playlist, User, Reel, Genre } from './types';
 import { PRODUCTS, INITIAL_STORIES, PURCHASE_HISTORY } from './constants';
 
@@ -25,7 +29,7 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]); // Product IDs
-  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped' | 'closet' | 'ai-studio'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped' | 'closet' | 'ai-studio' | 'whats-new' | 'new-arrivals' | 'weekly-gems' | 'search-with-attachments'>('home');
   const [selectedCategory, setSelectedCategory] = useState<QuickLink | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
@@ -132,6 +136,22 @@ const App: React.FC = () => {
     setCurrentView('ai-studio');
   };
 
+  const handleNavigateToWhatsNew = () => {
+    setCurrentView('whats-new');
+  };
+
+  const handleNavigateToNewArrivals = () => {
+      setCurrentView('new-arrivals');
+  };
+
+  const handleNavigateToWeeklyGems = () => {
+      setCurrentView('weekly-gems');
+  };
+
+  const handleNavigateToSearchWithAttachments = () => {
+    setCurrentView('search-with-attachments');
+  };
+
   const handleUpdateProfile = (updatedProfile: User) => {
     setUserProfile(updatedProfile);
   };
@@ -183,6 +203,20 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (currentView === 'search-with-attachments') {
+        return (
+            <SearchWithAttachmentsPage
+                products={PRODUCTS}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+
     if (currentView === 'ai-studio') {
         const closetProducts = PURCHASE_HISTORY
             .map(id => PRODUCTS.find(p => p.id === id))
@@ -193,6 +227,52 @@ const App: React.FC = () => {
             <AIStudioPage
                 closetProducts={closetProducts}
                 wishlistProducts={wishlistProducts}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+
+    if (currentView === 'whats-new') {
+        return (
+            <WhatsNewPage
+                products={PRODUCTS}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+
+    if (currentView === 'new-arrivals') {
+        const newArrivalsProducts = PRODUCTS.slice(-4);
+        return (
+            <NewArrivalsPage
+                products={newArrivalsProducts}
+                wishlist={wishlist}
+                onProductSelect={handleProductSelect}
+                onAddToCart={handleAddToCart}
+                onAddToWishlist={handleAddToWishlist}
+                onRemoveFromWishlist={handleRemoveFromWishlist}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+    
+    if (currentView === 'weekly-gems') {
+        const weeklyGemsProducts = ['prod-001', 'prod-005', 'prod-008', 'prod-012']
+            .map(id => PRODUCTS.find(p => p.id === id))
+            .filter((p): p is Product => Boolean(p));
+        return (
+            <WeeklyGemsPage
+                products={weeklyGemsProducts}
                 wishlist={wishlist}
                 onProductSelect={handleProductSelect}
                 onAddToCart={handleAddToCart}
@@ -358,9 +438,13 @@ const App: React.FC = () => {
             onNavigateToWishlist={handleNavigateToWishlist}
             onNavigateToChat={handleNavigateToChat}
             onNavigateToSearch={handleNavigateToSearch}
+            onNavigateToSearchWithAttachments={handleNavigateToSearchWithAttachments}
             onNavigateToWrapped={handleNavigateToWrapped}
             onNavigateToCloset={handleNavigateToCloset}
             onNavigateToAIStudio={handleNavigateToAIStudio}
+            onNavigateToWhatsNew={handleNavigateToWhatsNew}
+            onNavigateToNewArrivals={handleNavigateToNewArrivals}
+            onNavigateToWeeklyGems={handleNavigateToWeeklyGems}
         />
         <main className="flex-1 flex flex-col overflow-y-auto">
           <Header 

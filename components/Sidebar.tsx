@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, ChatIcon, WrappedIcon, DownloadIcon, ClosetIcon, AIStudioIcon } from './IconComponents';
+import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, ChatIcon, WrappedIcon, DownloadIcon, ClosetIcon, AIStudioIcon, PaperclipIcon } from './IconComponents';
 import { ARKAENIA_LOGO } from '../constants';
 
 interface NavItemProps {
@@ -46,12 +46,31 @@ interface SidebarProps {
     onNavigateToWishlist: () => void;
     onNavigateToChat: () => void;
     onNavigateToSearch: () => void;
+    onNavigateToSearchWithAttachments: () => void;
     onNavigateToWrapped: () => void;
     onNavigateToCloset: () => void;
     onNavigateToAIStudio: () => void;
+    onNavigateToWhatsNew: () => void;
+    onNavigateToNewArrivals: () => void;
+    onNavigateToWeeklyGems: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, onNavigateHome, onNavigateToWishlist, onNavigateToChat, onNavigateToSearch, onNavigateToWrapped, onNavigateToCloset, onNavigateToAIStudio }) => {
+const Sidebar: React.FC<SidebarProps> = ({ 
+    isCollapsed, 
+    onToggle, 
+    currentView, 
+    onNavigateHome, 
+    onNavigateToWishlist, 
+    onNavigateToChat, 
+    onNavigateToSearch,
+    onNavigateToSearchWithAttachments, 
+    onNavigateToWrapped, 
+    onNavigateToCloset, 
+    onNavigateToAIStudio,
+    onNavigateToWhatsNew,
+    onNavigateToNewArrivals,
+    onNavigateToWeeklyGems,
+}) => {
   return (
     <nav className={`bg-arkaenia-surface dark:bg-arkaenia-surface-dark flex-shrink-0 flex flex-col p-2 space-y-2 transition-all duration-300 ${isCollapsed ? 'w-[88px]' : 'w-64'}`}>
       <div className={`bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg p-2 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
@@ -73,6 +92,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, o
       <div className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg p-2 space-y-1">
         <NavItem icon={<HomeIcon className="w-6 h-6" />} label="Home" isCollapsed={isCollapsed} active={currentView === 'home'} onClick={onNavigateHome} />
         <NavItem icon={<SearchIcon className="w-6 h-6" />} label="Search" isCollapsed={isCollapsed} active={currentView === 'search'} onClick={onNavigateToSearch} />
+        <NavItem 
+            icon={<PaperclipIcon className="w-6 h-6" />} 
+            label="Visual Search" 
+            isCollapsed={isCollapsed} 
+            active={currentView === 'search-with-attachments'} 
+            onClick={onNavigateToSearchWithAttachments} 
+        />
         <NavItem 
             icon={<BookmarkIcon className="w-6 h-6" />} 
             label="Your Bookmarks" 
@@ -103,9 +129,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle, currentView, o
             <SectionTitle isCollapsed={isCollapsed}>Made For You</SectionTitle>
             <div className="p-2 space-y-1">
                 <NavItem icon={<ClosetIcon className="w-6 h-6" />} label="My Closet" isCollapsed={isCollapsed} active={currentView === 'closet'} onClick={onNavigateToCloset} />
-                <NavItem icon={<GridIcon className="w-6 h-6" />} label="What's new?" isCollapsed={isCollapsed} />
-                <NavItem icon={<ReleaseRadarIcon className="w-6 h-6" />} label="New arrivals" isCollapsed={isCollapsed} />
-                <NavItem icon={<DiscoverWeeklyIcon className="w-6 h-6" />} label="Weekly gems" isCollapsed={isCollapsed} />
+                <NavItem icon={<GridIcon className="w-6 h-6" />} label="What's new?" isCollapsed={isCollapsed} active={currentView === 'whats-new'} onClick={onNavigateToWhatsNew} />
+                <NavItem icon={<ReleaseRadarIcon className="w-6 h-6" />} label="New arrivals" isCollapsed={isCollapsed} active={currentView === 'new-arrivals'} onClick={onNavigateToNewArrivals} />
+                <NavItem icon={<DiscoverWeeklyIcon className="w-6 h-6" />} label="Weekly gems" isCollapsed={isCollapsed} active={currentView === 'weekly-gems'} onClick={onNavigateToWeeklyGems} />
             </div>
             
             {!isCollapsed && (
