@@ -18,9 +18,11 @@ import WrappedPage from './components/WrappedPage';
 import UploadReelModal from './components/UploadReelModal';
 import ClosetPage from './components/ClosetPage';
 import AIStudioPage from './components/AIStudioPage';
+import AIModelPage from './components/AIModelPage';
 import WhatsNewPage from './components/WhatsNewPage';
 import NewArrivalsPage from './components/NewArrivalsPage';
 import WeeklyGemsPage from './components/WeeklyGemsPage';
+import TrackPackagePage from './components/TrackPackagePage';
 import { Product, QuickLink, Playlist, User, Reel, Genre } from './types';
 import { PRODUCTS, INITIAL_STORIES, PURCHASE_HISTORY } from './constants';
 
@@ -29,7 +31,7 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<Product[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]); // Product IDs
-  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped' | 'closet' | 'ai-studio' | 'whats-new' | 'new-arrivals' | 'weekly-gems' | 'search-with-attachments'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'category' | 'playlist' | 'checkout' | 'profile' | 'wishlist' | 'chat' | 'search' | 'genre' | 'wrapped' | 'closet' | 'ai-studio' | 'ai-model' | 'whats-new' | 'new-arrivals' | 'weekly-gems' | 'search-with-attachments' | 'track-package'>('home');
   const [selectedCategory, setSelectedCategory] = useState<QuickLink | null>(null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
@@ -56,6 +58,25 @@ const App: React.FC = () => {
     root.classList.remove(theme === 'light' ? 'dark' : 'light');
     root.classList.add(theme);
   }, [theme]);
+
+  useEffect(() => {
+    const handleResize = () => {
+        const width = window.innerWidth;
+        document.body.classList.remove('is-phone', 'is-tablet', 'is-laptop');
+        if (width < 768) { // Typical phone breakpoint
+            document.body.classList.add('is-phone');
+        } else if (width < 1024) { // Typical tablet breakpoint
+            document.body.classList.add('is-tablet');
+        } else { // Larger screens
+            document.body.classList.add('is-laptop');
+        }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial class
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   const handleThemeToggle = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
@@ -136,6 +157,10 @@ const App: React.FC = () => {
     setCurrentView('ai-studio');
   };
 
+  const handleNavigateToAIModel = () => {
+    setCurrentView('ai-model');
+  };
+
   const handleNavigateToWhatsNew = () => {
     setCurrentView('whats-new');
   };
@@ -146,6 +171,10 @@ const App: React.FC = () => {
 
   const handleNavigateToWeeklyGems = () => {
       setCurrentView('weekly-gems');
+  };
+
+    const handleNavigateToTrackPackage = () => {
+      setCurrentView('track-package');
   };
 
   const handleNavigateToSearchWithAttachments = () => {
@@ -203,6 +232,10 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (currentView === 'track-package') {
+        return <TrackPackagePage onBack={handleNavigateHome} />;
+    }
+
     if (currentView === 'search-with-attachments') {
         return (
             <SearchWithAttachmentsPage
@@ -217,6 +250,16 @@ const App: React.FC = () => {
         );
     }
 
+    if (currentView === 'ai-model') {
+        return (
+            <AIModelPage
+                products={PRODUCTS}
+                onAddToCart={handleAddToCart}
+                onBack={handleNavigateHome}
+            />
+        );
+    }
+    
     if (currentView === 'ai-studio') {
         const closetProducts = PURCHASE_HISTORY
             .map(id => PRODUCTS.find(p => p.id === id))
@@ -399,6 +442,7 @@ const App: React.FC = () => {
       const playlistProducts = PRODUCTS.filter(p => selectedPlaylist.productIds.includes(p.id));
       return (
         <PlaylistPage
+// FIX: The `playlist` prop was being passed the incorrect variable `playlist` which was undefined. This has been corrected to use `selectedPlaylist` which holds the currently selected playlist object.
           playlist={selectedPlaylist}
           products={playlistProducts}
           wishlist={wishlist}
@@ -442,9 +486,11 @@ const App: React.FC = () => {
             onNavigateToWrapped={handleNavigateToWrapped}
             onNavigateToCloset={handleNavigateToCloset}
             onNavigateToAIStudio={handleNavigateToAIStudio}
+            onNavigateToAIModel={handleNavigateToAIModel}
             onNavigateToWhatsNew={handleNavigateToWhatsNew}
             onNavigateToNewArrivals={handleNavigateToNewArrivals}
             onNavigateToWeeklyGems={handleNavigateToWeeklyGems}
+            onNavigateToTrackPackage={handleNavigateToTrackPackage}
         />
         <main className="flex-1 flex flex-col overflow-y-auto">
           <Header 

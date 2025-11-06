@@ -73,3 +73,18 @@ export interface AIOutfit {
     productIds: string[];
     advice: string;
 }
+
+export interface TrackingEvent {
+    timestamp: string;
+    status: string;
+    location: string;
+}
+
+export interface Order {
+    id: string;
+    date: string;
+    items: Product[];
+    total: number;
+    status: string;
+    trackingNumber: string;
+}

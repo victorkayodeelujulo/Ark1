@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, ChatIcon, WrappedIcon, DownloadIcon, ClosetIcon, AIStudioIcon, PaperclipIcon } from './IconComponents';
+import { HomeIcon, SearchIcon, BookmarkIcon, ChevronLeftIcon, GridIcon, ReleaseRadarIcon, DiscoverWeeklyIcon, ChatIcon, WrappedIcon, DownloadIcon, ClosetIcon, AIStudioIcon, PaperclipIcon, BodyIcon, TruckIcon } from './IconComponents';
 import { ARKAENIA_LOGO } from '../constants';
 
 interface NavItemProps {
@@ -50,9 +50,11 @@ interface SidebarProps {
     onNavigateToWrapped: () => void;
     onNavigateToCloset: () => void;
     onNavigateToAIStudio: () => void;
+    onNavigateToAIModel: () => void;
     onNavigateToWhatsNew: () => void;
     onNavigateToNewArrivals: () => void;
     onNavigateToWeeklyGems: () => void;
+    onNavigateToTrackPackage: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -67,9 +69,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     onNavigateToWrapped, 
     onNavigateToCloset, 
     onNavigateToAIStudio,
+    onNavigateToAIModel,
     onNavigateToWhatsNew,
     onNavigateToNewArrivals,
     onNavigateToWeeklyGems,
+    onNavigateToTrackPackage,
 }) => {
   return (
     <nav className={`bg-arkaenia-surface dark:bg-arkaenia-surface-dark flex-shrink-0 flex flex-col p-2 space-y-2 transition-all duration-300 ${isCollapsed ? 'w-[88px]' : 'w-64'}`}>
@@ -121,6 +125,13 @@ const Sidebar: React.FC<SidebarProps> = ({
             active={currentView === 'ai-studio'} 
             onClick={onNavigateToAIStudio} 
         />
+        <NavItem 
+            icon={<BodyIcon className="w-6 h-6" />} 
+            label="AI Model" 
+            isCollapsed={isCollapsed} 
+            active={currentView === 'ai-model'} 
+            onClick={onNavigateToAIModel} 
+        />
       </div>
 
       <div className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg flex-1 flex flex-col overflow-hidden">
@@ -132,6 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <NavItem icon={<GridIcon className="w-6 h-6" />} label="What's new?" isCollapsed={isCollapsed} active={currentView === 'whats-new'} onClick={onNavigateToWhatsNew} />
                 <NavItem icon={<ReleaseRadarIcon className="w-6 h-6" />} label="New arrivals" isCollapsed={isCollapsed} active={currentView === 'new-arrivals'} onClick={onNavigateToNewArrivals} />
                 <NavItem icon={<DiscoverWeeklyIcon className="w-6 h-6" />} label="Weekly gems" isCollapsed={isCollapsed} active={currentView === 'weekly-gems'} onClick={onNavigateToWeeklyGems} />
+                <NavItem icon={<TruckIcon className="w-6 h-6" />} label="Track Package" isCollapsed={isCollapsed} active={currentView === 'track-package'} onClick={onNavigateToTrackPackage} />
             </div>
             
             {!isCollapsed && (

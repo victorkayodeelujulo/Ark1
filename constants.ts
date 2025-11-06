@@ -1,4 +1,4 @@
-import { Product, Playlist, Reel, QuickLink, ChatUser, ChatMessage, Genre } from './types';
+import { Product, Playlist, Reel, QuickLink, ChatUser, ChatMessage, Genre, Order, TrackingEvent } from './types';
 
 export const ARKAENIA_LOGO = 'https://lh3.googleusercontent.com/d/1YPRBBmTxLrjYLTBFRYKKrFRMTHH6hLC8'
 export const BACKGROUND_MUSIC_URL = 'https://storage.googleapis.com/pedagogico/plataforma/recursos/lofi-loop.mp3';
@@ -271,3 +271,24 @@ export const GENRES: Genre[] = [
     { id: 'g5', name: 'Bohemian', color: 'bg-lime-700', imageUrl: 'https://images.pexels.com/photos/1518177/pexels-photo-1518177.jpeg?auto=compress&cs=tinysrgb&w=400', productIds: ['prod-012'] },
     { id: 'g6', name: 'Athleisure', color: 'bg-sky-500', imageUrl: 'https://images.pexels.com/photos/4132538/pexels-photo-4132538.jpeg?auto=compress&cs=tinysrgb&w=400', productIds: ['prod-011'] },
 ];
+
+export const MOCK_ORDER: Order = {
+  id: '#AE8342-24',
+  date: 'July 28, 2024',
+  items: [
+    PRODUCTS.find(p => p.id === 'prod-008')!,
+    PRODUCTS.find(p => p.id === 'prod-005')!,
+  ],
+  total: 363.00,
+  status: 'In Transit',
+  trackingNumber: 'ARK0012345678',
+};
+
+export const TRACKING_DATA: Record<string, TrackingEvent[]> = {
+  'ARK0012345678': [
+    { timestamp: 'July 29, 2024, 10:05 PM', status: 'In Transit', location: 'City Logistics Center, Lagos, NG' },
+    { timestamp: 'July 29, 2024, 02:15 PM', status: 'Shipped', location: 'Arkaenia Warehouse, Ikeja, NG' },
+    { timestamp: 'July 28, 2024, 08:30 PM', status: 'Processing', location: 'Arkaenia Warehouse, Ikeja, NG' },
+    { timestamp: 'July 28, 2024, 05:45 PM', status: 'Order Placed', location: 'Online Store' },
+  ]
+};

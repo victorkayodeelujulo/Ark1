@@ -224,8 +224,27 @@ export const PaperclipIcon: React.FC<IconProps> = ({ className }) => (
     </svg>
 );
 
+export const BodyIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/>
+    </svg>
+);
+
+export const SparkleIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 9.5l-2.79-1.21L15.5 5l-1.21 2.79L11.5 9.5l2.79 1.21L15.5 14l1.21-2.79L19 9.5zM9.5 5l-1.21 2.79L5.5 9.5l2.79 1.21L9.5 14l1.21-2.79L13.5 9.5l-2.79-1.21L9.5 5zM19 18.5l-1.21-2.79L15.5 14l-2.79 1.21L11.5 18.5l1.21 2.79L15.5 24l2.79-1.21L19 18.5z" />
+    </svg>
+);
+
+
 export const XCircleIcon: React.FC<IconProps> = ({ className }) => (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+    </svg>
+);
+
+export const TruckIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-1.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zM15 11V4h3.5l2.5 4H15z" />
     </svg>
 );
