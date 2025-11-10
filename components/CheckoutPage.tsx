@@ -8,7 +8,7 @@ interface CheckoutPageProps {
   cart: Product[];
   isLoggedIn: boolean;
   onLogin: () => void;
-  onSuccessfulPayment: () => void;
+  onSuccessfulPayment: (method: 'card' | 'paypal' | 'crypto') => void;
   onRemoveFromCart: (productId: string) => void;
   onBack: () => void;
 }
@@ -35,9 +35,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ cart, isLoggedIn, onLogin, 
     setIsPaymentModalOpen(true);
   };
   
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (method: 'card' | 'paypal' | 'crypto') => {
       setIsPaymentModalOpen(false);
-      onSuccessfulPayment();
+      onSuccessfulPayment(method);
   };
 
   return (

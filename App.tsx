@@ -38,6 +38,7 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [selectedStory, setSelectedStory] = useState<Reel | null>(null);
   const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+  const [lastPaymentMethod, setLastPaymentMethod] = useState<'card' | 'paypal' | 'crypto' | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [stories, setStories] = useState<Reel[]>(INITIAL_STORIES);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -200,13 +201,15 @@ const App: React.FC = () => {
     setIsLoggedIn(false);
   };
 
-  const handleSuccessfulPayment = () => {
+  const handleSuccessfulPayment = (method: 'card' | 'paypal' | 'crypto') => {
     setCart([]);
     setIsPaymentSuccess(true);
+    setLastPaymentMethod(method);
     setTimeout(() => {
       setIsPaymentSuccess(false);
+      setLastPaymentMethod(null);
       handleNavigateHome();
-    }, 3000);
+    }, 5000);
   };
 
   const handleSelectStory = (story: Reel) => {
@@ -509,7 +512,7 @@ const App: React.FC = () => {
         </main>
       </div>
       {currentView !== 'wrapped' && <NowPlayingBar product={selectedProduct} onAddToCart={handleAddToCart} />}
-      {isPaymentSuccess && <PaymentSuccessModal />}
+      {isPaymentSuccess && <PaymentSuccessModal paymentMethod={lastPaymentMethod} />}
       {selectedStory && <StoryModal story={selectedStory} onClose={handleCloseStory} />}
       {isUploadModalOpen && <UploadReelModal onClose={handleCloseUploadModal} onPost={handleAddReel} />}
     </div>
