@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Product, AIOutfit } from "../types";
 
 // Lazily initialize the GoogleGenAI client to prevent app crashes on load
@@ -97,6 +97,73 @@ You must return the response in a JSON format that matches the provided schema.`
     throw new Error("Failed to generate an outfit. The AI stylist might be busy.");
   }
 };
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const generateOutfitImage = async (outfitProducts: Product[]): Promise<string> => {
+    const aiClient = getAiClient();
+    const productDescriptions = outfitProducts
+        .map(p => `${p.name} (color: ${p.color || 'not specified'}) by ${p.brand}`)
+        .join(', ');
+
+    const prompt = `Create a hyper-realistic, editorial-style fashion photograph suitable for a high-end online magazine. The image should look like it was captured by a professional fashion photographer.
+
+**Subject:** A full-body shot of a confident female fashion model.
+**Pose:** Natural, dynamic, and engaging. Avoid stiff or unnatural poses.
+**Outfit Details:** The model is wearing a complete, cohesive outfit consisting of: ${productDescriptions}. Ensure the clothing items are rendered accurately and look like real fabric.
+**Setting:** A stylish and slightly blurred urban environment, such as a chic European city street or in front of interesting architecture. The background should complement the outfit, not distract from it.
+**Lighting:** Soft, natural daylight (golden hour preferred) that creates a beautiful, flattering look and highlights the texture of the clothes.
+**Photo Style:** Shot with a professional DSLR camera and a prime lens (like an 85mm f/1.4) to create a shallow depth of field. The image must be high-resolution, sharp, and photorealistic.
+**Overall Vibe:** Aspirational, modern, and effortlessly cool. It should look like a curated image from a popular fashion blog or Instagram influencer.
+**Crucially, do not make it look like a generic AI-generated image. It must appear as a genuine photograph.**`;
+
+    const MAX_RETRIES = 3;
+    let lastError: any = null;
+
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
+            const response = await aiClient.models.generateContent({
+                model: 'gemini-2.5-flash-image',
+                contents: { parts: [{ text: prompt }] },
+                config: { responseModalities: [Modality.IMAGE] },
+            });
+
+            for (const part of response.candidates?.[0]?.content?.parts || []) {
+                if (part.inlineData) {
+                    return `data:image/png;base64,${part.inlineData.data}`;
+                }
+            }
+            throw new Error("Image generation succeeded but no image data was returned.");
+
+        } catch (err: any) {
+            lastError = err;
+            console.error(`Error generating outfit image (attempt ${attempt + 1}/${MAX_RETRIES}):`, err.message);
+
+            let isRateLimitError = false;
+            let retryDelayMs = 2000 * Math.pow(2, attempt) + Math.random() * 1000;
+
+            if (typeof err.message === 'string') {
+                try {
+                    const errorJson = JSON.parse(err.message);
+                    if (errorJson?.error?.status === 'RESOURCE_EXHAUSTED') {
+                        isRateLimitError = true;
+                    }
+                } catch (e) { /* Not a JSON error message, proceed with default backoff. */ }
+            }
+
+            if (isRateLimitError && attempt < MAX_RETRIES - 1) {
+                console.log(`Rate limit hit. Retrying in ${Math.round(retryDelayMs / 1000)}s...`);
+                await sleep(retryDelayMs);
+            } else {
+                break;
+            }
+        }
+    }
+
+    console.error("Final error after all retries:", lastError);
+    throw new Error("Failed to visualize the outfit. The AI model might be busy.");
+};
+
 
 export const searchWithAttachments = async (prompt: string, attachments: File[], allProducts: Product[]): Promise<string[]> => {
     try {

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Product, AIOutfit } from '../types';
-import { generateAIOutfit } from '../services/geminiService';
+import { generateAIOutfit, generateOutfitImage } from '../services/geminiService';
 import ProductCard from './ProductCard';
 import { ChevronLeftIcon, AIStudioIcon } from './IconComponents';
 
@@ -24,7 +24,7 @@ const VibeSuggestion: React.FC<{ vibe: string; onClick: (vibe: string) => void }
     </button>
 );
 
-const LoadingStudio: React.FC<{ products: Product[] }> = ({ products }) => {
+const LoadingStudio: React.FC<{ products: Product[]; message: string }> = ({ products, message }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ const LoadingStudio: React.FC<{ products: Product[] }> = ({ products }) => {
         return (
             <div className="flex flex-col items-center justify-center py-20">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-arkaenia-accent dark:border-arkaenia-accent-dark"></div>
-                <p className="mt-4 text-arkaenia-subtext dark:text-arkaenia-subtext-dark">Checking your collection...</p>
+                <p className="mt-4 text-arkaenia-subtext dark:text-arkaenia-subtext-dark">{message || 'Checking your collection...'}</p>
             </div>
         );
     }
@@ -58,8 +58,8 @@ const LoadingStudio: React.FC<{ products: Product[] }> = ({ products }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-arkaenia-surface dark:from-arkaenia-surface-dark to-transparent"></div>
                 <AIStudioIcon className="relative w-24 h-24 text-arkaenia-primary dark:text-arkaenia-primary-dark drop-shadow-lg" />
             </div>
-            <p className="mt-4 text-lg font-semibold text-arkaenia-subtext dark:text-arkaenia-subtext-dark">Scanning your closet for the perfect vibe...</p>
-            <p className="text-sm text-arkaenia-subtext dark:text-arkaenia-subtext-dark">This might take a moment.</p>
+            <p className="mt-4 text-lg font-semibold text-arkaenia-subtext dark:text-arkaenia-subtext-dark">{message}</p>
+            <p className="text-sm text-arkaenia-subtext dark:text-arkaenia-subtext-dark">Please be patient.</p>
         </div>
     );
 };
@@ -77,7 +77,9 @@ const AIStudioPage: React.FC<AIStudioPageProps> = ({
 }) => {
   const [vibe, setVibe] = useState('');
   const [generatedOutfit, setGeneratedOutfit] = useState<AIOutfit | null>(null);
+  const [generatedOutfitImageUrl, setGeneratedOutfitImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const availableProducts = useMemo(() => {
@@ -98,13 +100,33 @@ const AIStudioPage: React.FC<AIStudioPageProps> = ({
     setIsLoading(true);
     setError(null);
     setGeneratedOutfit(null);
+    setGeneratedOutfitImageUrl(null);
+    setLoadingMessage("Curating your outfit from your collection...");
 
     try {
       const result = await generateAIOutfit(currentVibe, availableProducts);
       if (!result.productIds || result.productIds.length === 0) {
           setError("I couldn't find a matching outfit in your collection. Try a different vibe or add more items to your closet and wishlist!");
-      } else {
-        setGeneratedOutfit(result);
+          setIsLoading(false);
+          return;
+      }
+      
+      setGeneratedOutfit(result);
+
+      const outfitProductsForImage = result.productIds
+          .map(id => availableProducts.find(p => p.id === id))
+          .filter((p): p is Product => Boolean(p));
+
+      if (outfitProductsForImage.length > 0) {
+          setLoadingMessage("Generating your personalized look...");
+          try {
+            const imageUrl = await generateOutfitImage(outfitProductsForImage);
+            setGeneratedOutfitImageUrl(imageUrl);
+          } catch (imageError) {
+            console.error("Image generation failed:", imageError);
+            // Image generation failed, but we can still show the text advice.
+            // The URL state remains null, which the UI will handle.
+          }
       }
     } catch (err) {
       setError("Sorry, my circuits are a bit fuzzy. Please try again later.");
@@ -165,7 +187,7 @@ const AIStudioPage: React.FC<AIStudioPageProps> = ({
         </div>
 
         <div className="mt-12">
-          {isLoading && <LoadingStudio products={availableProducts} />}
+          {isLoading && <LoadingStudio products={availableProducts} message={loadingMessage} />}
 
           {error && (
             <div className="text-center py-20 bg-red-500/10 rounded-lg">
@@ -174,14 +196,28 @@ const AIStudioPage: React.FC<AIStudioPageProps> = ({
           )}
           
           {!isLoading && !error && generatedOutfit && (
-            <div>
-                <div className="bg-arkaenia-bg dark:bg-arkaenia-bg-dark p-6 rounded-lg mb-8 border border-arkaenia-card dark:border-arkaenia-card-dark animate-flyIn" style={{opacity: 0}}>
-                    <h2 className="text-xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-2">Stylist's Advice:</h2>
-                    <p className="text-arkaenia-text dark:text-arkaenia-text-dark italic">"{generatedOutfit.advice}"</p>
+            <div className="animate-fadeIn">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start mb-8">
+                    <div className="lg:col-span-2 bg-arkaenia-bg dark:bg-arkaenia-bg-dark rounded-lg p-4 border border-arkaenia-card dark:border-arkaenia-card-dark animate-flyIn">
+                        {generatedOutfitImageUrl ? (
+                            <img src={generatedOutfitImageUrl} alt="AI generated outfit" className="w-full h-auto aspect-[3/4] object-cover rounded-md" />
+                        ) : (
+                            <div className="w-full aspect-[3/4] flex flex-col items-center justify-center bg-arkaenia-card dark:bg-arkaenia-card-dark rounded-md">
+                               <AIStudioIcon className="w-24 h-24 text-arkaenia-subtext/50 dark:text-arkaenia-subtext-dark/50" />
+                               <p className="mt-4 text-center text-arkaenia-subtext dark:text-arkaenia-subtext-dark">Image generation failed or is unavailable.</p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="lg:col-span-3 bg-arkaenia-bg dark:bg-arkaenia-bg-dark p-6 rounded-lg border border-arkaenia-card dark:border-arkaenia-card-dark animate-flyIn" style={{ animationDelay: '100ms', opacity: 0 }}>
+                        <h2 className="text-xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-2">Stylist's Advice:</h2>
+                        <p className="text-arkaenia-text dark:text-arkaenia-text-dark italic">"{generatedOutfit.advice}"</p>
+                    </div>
                 </div>
+                
+                <h3 className="text-2xl font-bold text-arkaenia-accent dark:text-arkaenia-accent-dark mb-4">Items in this Look</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {outfitProducts.map((product, index) => (
-                      <div className="animate-flyIn" style={{ animationDelay: `${100 + index * 100}ms`, opacity: 0 }} key={product.id}>
+                      <div className="animate-flyIn" style={{ animationDelay: `${200 + index * 100}ms`, opacity: 0 }} key={product.id}>
                         <ProductCard
                           product={product}
                           wishlist={wishlist}
